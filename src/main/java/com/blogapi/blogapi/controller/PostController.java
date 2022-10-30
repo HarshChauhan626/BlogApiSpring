@@ -1,9 +1,6 @@
 package com.blogapi.blogapi.controller;
 
-import java.util.List;
-
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
