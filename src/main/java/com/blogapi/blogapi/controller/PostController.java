@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.StreamingHttpOutputMessage.Body;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,7 +39,7 @@ public class PostController {
     }
 
     // Get all posts
-    @GetMapping
+    @GetMapping("/list")
     public PostResponse getAllPosts(
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
@@ -62,6 +63,16 @@ public class PostController {
     public ResponseEntity<String> deletePost(@PathVariable(name = "id") long id) {
         postService.deletePost(id);
         return new ResponseEntity<String>("Post deleted succussfully", HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<PostResponse> searchPost(@RequestParam(value="searchText",defaultValue = "",required = true) String searchText,@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+    @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+    @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
+    @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir){
+        System.out.println("Search text coming is "+searchText);
+        PostResponse searchPostResult=postService.searchPosts(searchText,pageNo, pageSize, sortBy, sortDir);
+        return new ResponseEntity<PostResponse>(searchPostResult,HttpStatus.OK);
     }
 
 }

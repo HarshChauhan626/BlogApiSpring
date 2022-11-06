@@ -18,10 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.blogapi.blogapi.entity.Role;
 import com.blogapi.blogapi.entity.User;
+import com.blogapi.blogapi.payload.JWTAuthResponse;
 import com.blogapi.blogapi.payload.LoginDto;
 import com.blogapi.blogapi.payload.SignUpDto;
 import com.blogapi.blogapi.repository.RoleRepository;
 import com.blogapi.blogapi.repository.UserRepository;
+import com.blogapi.blogapi.security.JwtTokenProvider;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -38,34 +40,24 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JwtTokenProvider tokenProvider;
 
     @PostMapping("/signin")
-    public ResponseEntity<String> authennticateUser(@RequestBody LoginDto loginDto) {
-        try{
-            System.out.println(loginDto.toString());
-            Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDto.getUsernameOrEmail(), loginDto.getPassword()));
+    public ResponseEntity<JWTAuthResponse> authenticateUser(@RequestBody LoginDto loginDto){
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                loginDto.getUsernameOrEmail(), loginDto.getPassword()));
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-        catch(Exception e){
-            System.out.println(e);
-            throw e;
-        }
-        // Optional<User> user=userRepository.findByEmail(loginDto.getUsernameOrEmail());
-        // if(user!=null){
-        //     return new ResponseEntity<>("User signed-in successfully", HttpStatus.OK);
-        // }
-        // return new ResponseEntity<>("User not found", HttpStatus.FORBIDDEN);
-        
-        return new ResponseEntity<>("User signed-in successfully", HttpStatus.OK);
+
+        // get token form tokenProvider
+        String token = tokenProvider.generateToken(authentication);
+
+        return ResponseEntity.ok(new JWTAuthResponse(token));
     }
 
-
-    
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignUpDto signUpDto){
-
-        System.out.println("Inside register user");
 
         // add check for username exists in a DB
         if(userRepository.existsByUsername(signUpDto.getUsername())){
@@ -76,9 +68,6 @@ public class AuthController {
         if(userRepository.existsByEmail(signUpDto.getEmail())){
             return new ResponseEntity<>("Email is already taken!", HttpStatus.BAD_REQUEST);
         }
-
-        System.out.println("After conditions");
-
 
         // create user object
         User user = new User();
@@ -95,7 +84,6 @@ public class AuthController {
         return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
 
     }
-
 
 
 }

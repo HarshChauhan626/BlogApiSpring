@@ -1,9 +1,12 @@
 package com.blogapi.blogapi.entity;
 
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
+
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -27,4 +30,10 @@ public class User {
         joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles;
+
+    @OneToMany(mappedBy="to")
+    private List<Followers> followers;
+
+    @OneToMany(mappedBy="from")
+    private List<Followers> following;
 }

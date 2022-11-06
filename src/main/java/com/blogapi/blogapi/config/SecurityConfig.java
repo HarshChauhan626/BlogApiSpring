@@ -19,8 +19,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 // import com.blogapi.blogapi.security.CustomUserDetailsService;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.blogapi.blogapi.security.CustomUserDetailsService;
+import com.blogapi.blogapi.security.JwtAuthenticationEntryPoint;
+import com.blogapi.blogapi.security.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -30,21 +33,50 @@ public class SecurityConfig {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    @Autowired
+    private JwtAuthenticationEntryPoint authenticationEntryPoint;
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter();
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        // http
+        // .csrf().disable()
+        // .exceptionHandling()
+        // .and()
+        // .authorizeRequests()
+        // .antMatchers(HttpMethod.GET, "/api/**").permitAll()
+        // .antMatchers("/api/auth/**").permitAll()
+        // .anyRequest()
+        // .authenticated()
+        // .and()
+        // .httpBasic();
+
         http
                 .csrf().disable()
                 .exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint)
                 .and()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/api/**").permitAll()
-                .antMatchers("/api/auth/**").permitAll()
-                .anyRequest()
-                .authenticated()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .httpBasic();
+                .authorizeRequests((authorize) -> authorize
+                        .antMatchers(HttpMethod.GET, "/api/**").permitAll()
+                        .antMatchers("/api/auth/**").permitAll()
+                        .antMatchers("/api-docs/**").permitAll()
+                        .antMatchers("/swagger-ui/**").permitAll()
+                        .antMatchers("/swagger-resources/**").permitAll()
+                        .antMatchers("/swagger-ui.html").permitAll()
+                        .antMatchers("/webjars/**").permitAll()
+                        .anyRequest()
+                        .authenticated());
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+
     }
 
     @Bean

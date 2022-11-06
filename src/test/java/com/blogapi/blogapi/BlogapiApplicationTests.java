@@ -1,13 +1,13 @@
-// package com.blogapi.blogapi;
+package com.blogapi.blogapi;
 
-// import org.junit.jupiter.api.Test;
-// import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-// @SpringBootTest
-// class BlogapiApplicationTests {
+@SpringBootTest
+class BlogapiApplicationTests {
 
-// 	@Test
-// 	void contextLoads() {
-// 	}
+	@Test
+	void contextLoads() {
+	}
 
-// }
+}
