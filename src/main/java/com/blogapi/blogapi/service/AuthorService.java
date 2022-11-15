@@ -1,9 +1,9 @@
 package com.blogapi.blogapi.service;
 
-import com.blogapi.blogapi.payload.AuthorListResponse;
+import com.blogapi.blogapi.payload.UserListResponse;
 
 public interface AuthorService {
-    AuthorListResponse searchAuthors(String searchText);
+    UserListResponse searchAuthors(String searchText,int pageNo, int pageSize, String sortBy, String sortDir);
 
-    AuthorListResponse getAuthorList();
+    UserListResponse getAuthorList(int pageNo, int pageSize, String sortBy, String sortDir);
 }

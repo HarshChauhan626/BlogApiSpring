@@ -2,12 +2,12 @@ package com.blogapi.blogapi.service;
 
 import com.blogapi.blogapi.payload.PostDto;
 
-import com.blogapi.blogapi.payload.PostResponse;
+import com.blogapi.blogapi.payload.PostListResponse;
 
 public interface PostService {
     PostDto createPost(PostDto postDto);
 
-    PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir);
+    PostListResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir);
 
     PostDto getPostById(long id);
 
@@ -15,5 +15,5 @@ public interface PostService {
 
     void deletePost(long id);
 
-    PostResponse searchPosts(String searchText, int pageNo, int pageSize, String sortBy, String sortDir);
+    PostListResponse searchPosts(String searchText, int pageNo, int pageSize, String sortBy, String sortDir);
 }

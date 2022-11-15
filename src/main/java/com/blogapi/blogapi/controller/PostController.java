@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.blogapi.blogapi.payload.PostResponse;
+import com.blogapi.blogapi.payload.PostListResponse;
 import com.blogapi.blogapi.utils.AppConstants;
 
 @RestController
@@ -40,7 +40,7 @@ public class PostController {
 
     // Get all posts
     @GetMapping("/list")
-    public PostResponse getAllPosts(
+    public PostListResponse getAllPosts(
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
             @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
@@ -66,13 +66,13 @@ public class PostController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<PostResponse> searchPost(@RequestParam(value="searchText",defaultValue = "",required = true) String searchText,@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+    public ResponseEntity<PostListResponse> searchPost(@RequestParam(value="searchText",defaultValue = "",required = true) String searchText,@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
     @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
     @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
     @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir){
         System.out.println("Search text coming is "+searchText);
-        PostResponse searchPostResult=postService.searchPosts(searchText,pageNo, pageSize, sortBy, sortDir);
-        return new ResponseEntity<PostResponse>(searchPostResult,HttpStatus.OK);
+        PostListResponse searchPostResult=postService.searchPosts(searchText,pageNo, pageSize, sortBy, sortDir);
+        return new ResponseEntity<PostListResponse>(searchPostResult,HttpStatus.OK);
     }
 
 }

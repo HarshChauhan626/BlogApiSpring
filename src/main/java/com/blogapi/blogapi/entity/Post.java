@@ -12,27 +12,26 @@ import java.util.Set;
 @NoArgsConstructor
 
 @Entity
-@Table(
-        name = "posts", uniqueConstraints = {@UniqueConstraint(columnNames = {"title"})}
-)
+@Table(name = "posts", uniqueConstraints = { @UniqueConstraint(columnNames = { "title" }) })
 public class Post {
 
-    @Id
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY
-    )
-    private Long id;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
 
-    @Column(name = "title", nullable = false)
-    private String title;
+        @Column(name = "title", nullable = false)
+        private String title;
 
-    @Column(name = "description", nullable = false)
-    private String description;
+        @Column(name = "description", nullable = false)
+        private String description;
 
-    @Column(name = "content", nullable = false)
-    private String content;
+        @Column(name = "content", nullable = false)
+        private String content;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Comment> comments = new HashSet<>();
+        @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+        private Set<Comment> comments = new HashSet<Comment>();
+
+        @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY,mappedBy = "post")
+        private Set<Like> likes = new HashSet<Like>();
 
 }

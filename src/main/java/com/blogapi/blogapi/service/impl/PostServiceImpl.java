@@ -18,7 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import com.blogapi.blogapi.payload.PostResponse;
+import com.blogapi.blogapi.payload.PostListResponse;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -44,7 +44,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
+    public PostListResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
 
@@ -58,7 +58,7 @@ public class PostServiceImpl implements PostService {
 
         List<PostDto> content = listOfPosts.stream().map(post -> mapToDto(post)).collect(Collectors.toList());
 
-        PostResponse postResponse = new PostResponse();
+        PostListResponse postResponse = new PostListResponse();
         postResponse.setContent(content);
         postResponse.setPageNo(posts.getNumber());
         postResponse.setPageSize(posts.getSize());
@@ -97,26 +97,17 @@ public class PostServiceImpl implements PostService {
     // convert Entity into DTO
     private PostDto mapToDto(Post post) {
         PostDto postDto = modelMapper.map(post, PostDto.class);
-        // PostDto postDto = new PostDto();
-        // postDto.setId(post.getId());
-        // postDto.setTitle(post.getTitle());
-        // postDto.setDescription(post.getDescription());
-        // postDto.setContent(post.getContent());
         return postDto;
     }
 
     // convert DTO to entity
     private Post mapToEntity(PostDto postDto) {
         Post post = modelMapper.map(postDto, Post.class);
-        // Post post = new Post();
-        // post.setTitle(postDto.getTitle());
-        // post.setDescription(postDto.getDescription());
-        // post.setContent(postDto.getContent());
         return post;
     }
 
     @Override
-    public PostResponse searchPosts(String searchText, int pageNo, int pageSize, String sortBy, String sortDir) {
+    public PostListResponse searchPosts(String searchText, int pageNo, int pageSize, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
 
@@ -134,7 +125,7 @@ public class PostServiceImpl implements PostService {
 
             List<PostDto> content = listOfPosts.stream().map(post -> mapToDto(post)).collect(Collectors.toList());
 
-            PostResponse postResponse = new PostResponse();
+            PostListResponse postResponse = new PostListResponse();
             postResponse.setContent(content);
             postResponse.setPageNo(posts.getNumber());
             postResponse.setPageSize(posts.getSize());
