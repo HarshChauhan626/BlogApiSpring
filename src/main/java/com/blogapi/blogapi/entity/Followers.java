@@ -16,11 +16,11 @@ public class Followers {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name="from_user_fk")
-    private User from;
+    @JoinColumn(name="source_id")
+    private User source;
 
     @ManyToOne
-    @JoinColumn(name="to_user_fk")
-    private User to;
+    @JoinColumn(name="target_id")
+    private User target;
 
 }

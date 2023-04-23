@@ -8,9 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.blogapi.blogapi.entity.User;
+import com.blogapi.blogapi.payload.FollowerListResponse;
+import com.blogapi.blogapi.payload.FollowingListResponse;
 import com.blogapi.blogapi.payload.UserListRequest;
 import com.blogapi.blogapi.payload.UserListResponse;
 import com.blogapi.blogapi.service.AuthorService;
+import com.blogapi.blogapi.service.FollowerService;
 import com.blogapi.blogapi.utils.AppConstants;
 
 @RestController
@@ -18,9 +21,11 @@ import com.blogapi.blogapi.utils.AppConstants;
 public class AuthorController {
 
     private AuthorService authorService;
+    private FollowerService followerService;
 
-    public AuthorController(AuthorService authorService) {
+    public AuthorController(AuthorService authorService,FollowerService followerService) {
         this.authorService = authorService;
+        this.followerService=followerService;
     }
 
 
@@ -41,6 +46,20 @@ public class AuthorController {
             UserListResponse userListResponse=authorService.getAuthorList( userListRequest.getPageNo(), userListRequest.getPageSize(), AppConstants.DEFAULT_SORT_BY, AppConstants.DEFAULT_SORT_DIRECTION);
             return new ResponseEntity<UserListResponse>(userListResponse,HttpStatus.OK);
         }
+    }
+
+
+    @GetMapping("/followers")
+    public ResponseEntity<FollowerListResponse> getFollowerList(){
+        FollowerListResponse followerListResponse=followerService.getFollowerList();
+        return new ResponseEntity<FollowerListResponse>(followerListResponse,HttpStatus.OK);
+    }
+
+
+    @GetMapping("/following")
+    public ResponseEntity<FollowingListResponse> getFollowingList(){
+        FollowingListResponse followingListResponse=followerService.getFollowingList();
+        return new ResponseEntity<FollowingListResponse>(followingListResponse,HttpStatus.OK);
     }
 
 

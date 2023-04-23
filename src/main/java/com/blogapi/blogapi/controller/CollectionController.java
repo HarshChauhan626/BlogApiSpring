@@ -24,7 +24,7 @@ public class CollectionController {
 
     }
 
-    @PostMapping("/{collectionId}/posts")
+    @GetMapping("/{collectionId}/posts")
     void getCollectionPosts(){
     }
 

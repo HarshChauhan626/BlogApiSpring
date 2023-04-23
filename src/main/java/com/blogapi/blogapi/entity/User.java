@@ -29,13 +29,13 @@ public class User {
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles;
 
-    @OneToMany(mappedBy = "to", fetch = FetchType.LAZY)
-    private List<Followers> followers;
-
-    @OneToMany(mappedBy = "from", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "source", fetch = FetchType.LAZY)
     private List<Followers> following;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY,mappedBy = "user")
+    @OneToMany(mappedBy = "target", fetch = FetchType.LAZY)
+    private List<Followers> followers;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "user")
     private Set<Like> likes = new HashSet<Like>();
 
 }

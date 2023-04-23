@@ -2,9 +2,6 @@ package com.blogapi.blogapi.service.impl;
 
 import java.util.Optional;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.blogapi.blogapi.entity.Like;
@@ -13,6 +10,7 @@ import com.blogapi.blogapi.entity.User;
 import com.blogapi.blogapi.repository.LikeRepository;
 import com.blogapi.blogapi.repository.PostRepository;
 import com.blogapi.blogapi.repository.UserRepository;
+import com.blogapi.blogapi.security.CustomUserDetailsService;
 import com.blogapi.blogapi.service.LikeService;
 
 @Service
@@ -20,27 +18,24 @@ public class LikeServiceImpl implements LikeService {
 
     private LikeRepository likeRepository;
     private PostRepository postRepository;
-    private UserRepository userRepository;
+    private CustomUserDetailsService customUserDetailsService;
 
     public LikeServiceImpl(LikeRepository likeRepository, PostRepository postRepository,
-            UserRepository userRepository) {
+            CustomUserDetailsService customUserDetailsService) {
         this.likeRepository = likeRepository;
         this.postRepository = postRepository;
-        this.userRepository = userRepository;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     @Override
     public void likePost(long postId) {
-        Authentication userDetails = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(userDetails.getName());
-        String userName = userDetails.getName();
-        Optional<User> user = userRepository.findByUsernameOrEmail(userName, userName);
+        Optional<User> currentUser = customUserDetailsService.getUser();
         Optional<Post> post = postRepository.findById(postId);
-        if (user.get() != null) {
-            long id = user.get().getId();
+        if (currentUser.get() != null) {
+            long id = currentUser.get().getId();
             if (likeRepository.findByPostIdAndUserId(postId, id) == null) {
                 Like like = new Like();
-                like.setUser(user.get());
+                like.setUser(currentUser.get());
                 like.setPost(post.get());
                 likeRepository.save(like);
             }
@@ -49,15 +44,11 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     public void unlikePost(long postId) {
-        Authentication userDetails = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(userDetails.getName());
-        String userName = userDetails.getName();
-        Optional<User> user = userRepository.findByUsernameOrEmail(userName, userName);
-        Optional<Post> post = postRepository.findById(postId);
-        if (user.get() != null) {
-            long id = user.get().getId();
-            Optional<Like> like=likeRepository.findByPostIdAndUserId(postId, id);
-            if(like!=null){
+        Optional<User> currentUser = customUserDetailsService.getUser();
+        if (currentUser.get() != null) {
+            long id = currentUser.get().getId();
+            Optional<Like> like = likeRepository.findByPostIdAndUserId(postId, id);
+            if (like != null) {
                 likeRepository.delete(like.get());
             }
         }

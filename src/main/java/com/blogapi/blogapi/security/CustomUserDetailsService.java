@@ -1,7 +1,9 @@
 package com.blogapi.blogapi.security;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,6 +14,7 @@ import com.blogapi.blogapi.entity.User;
 import com.blogapi.blogapi.repository.UserRepository;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,6 +39,16 @@ public class CustomUserDetailsService implements UserDetailsService {
     private Collection< ? extends GrantedAuthority> mapRolesToAuthorities(Set<Role> roles){
         return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
     }
+
+
+    public Optional<User> getUser(){
+        Authentication userDetails = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(userDetails.getName());
+        String userNameOrEmail = userDetails.getName();
+        Optional<User> user=userRepository.findByUsernameOrEmail(userNameOrEmail,userNameOrEmail);
+        return user;
+    }
+
 
 }
 
